@@ -2,8 +2,8 @@ FROM python:3.12.3
 
 WORKDIR /app
 
-COPY client/ /app/
+COPY . . 
 
 RUN pip install --no-cache-dir -r requirements.txt || true
 
-CMD ["python", "app.py"]
+CMD ["python", "client.py"]

@@ -5,8 +5,7 @@ FROM python:3.12.3
 WORKDIR /app
 
 # Copia os arquivos do servidor
-COPY /server/ /app/
-
+COPY . .
 # Instala dependências (se necessário)
 RUN pip install --no-cache-dir -r requirements.txt || true
 
