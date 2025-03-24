@@ -1,16 +1,25 @@
-#docker-compose.yml
-
 services:
-    server: 
-        build: .
-        container_name: server
-        ports:
-        - "5000:5000"
+  server:
+    build: ./app/server
+    ports:
+      - "5000:5000"
+    networks:
+      - charging_network
 
-    client:
-        build: . 
-        container_name: client 
-        depends_on:
-            -server
-        entrypoint: ["python", "/app/client.py"]
-        
+  client:
+    build: ./app/client
+    depends_on:
+      - server
+    networks:
+      - charging_network
+
+  charge-point:
+    build: ./app/charge-point
+    depends_on:
+      - server
+    networks:
+      - charging_network
+
+networks:
+  charging_network:
+    driver: bridge
