@@ -3,6 +3,7 @@ services:
     build:
       context: ./app/server
       dockerfile: Dockerfile-server
+    container_name: server-1
     ports:
       - "5000:5000"
     networks:
@@ -12,22 +13,40 @@ services:
     build:
       context: ./app/client
       dockerfile: Dockerfile-client
+    container_name: client-1
     depends_on:
       - server
     networks:
       - charging_network
     stdin_open: true
     tty: true
-
-  charge-point:
+  charge-point-1:
     build:
       context: ./app/charge-point
       dockerfile: Dockerfile-charge-point
+    container_name: charge-point-1
     depends_on:
       - server
     networks:
       - charging_network
 
+  charge-point-2:
+    build:
+      context: ./app/charge-point
+      dockerfile: Dockerfile-charge-point
+    container_name: charge-point-2
+    depends_on:
+      - server
+    networks:
+      - charging_network
+
+  charge-point-3:
+    build:
+      context: ./app/charge-point
+      dockerfile: Dockerfile-charge-point
+    container_name: charge-point-3
+    depends_on:
+      - server
 networks:
   charging_network:
     driver: bridge

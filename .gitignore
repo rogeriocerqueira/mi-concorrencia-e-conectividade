@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+*.log
+log.txt
+
+# Docker
+*.pid
+*.sock
+.env
+
+# VS Code
+.vscode/
+
+# Arquivos temporários
+*.swp
+*.tmp
+*.bak
+
+# Arquivos de build
+build/
+dist/
+*.egg-info/
