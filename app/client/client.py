@@ -28,7 +28,7 @@ if __name__ == "__main__":
         if cmd == "EXIT":
             print("Saindo do cliente...")
             break
-        elif cmd in ["START", "STOP"]:
+        elif cmd.startswith("POSICAO:") or cmd in ["START", "STOP"]:
             send_command(cmd)
         else:
-            print("Comando inválido. Use 'START', 'STOP' ou 'EXIT'.")
+            print("Comando inválido. Use 'POSICAO:<número>', 'START', 'STOP' ou 'EXIT'.")
