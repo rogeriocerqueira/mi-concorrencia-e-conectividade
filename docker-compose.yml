@@ -1,23 +1,28 @@
 services:
   server:
-    build: ./app/server
+    build:
+      context: ./app/server
+      dockerfile: Dockerfile-server
     ports:
       - "5000:5000"
     networks:
       - charging_network
 
   client:
-    build: ./app/client
+    build:
+      context: ./app/client
+      dockerfile: Dockerfile-client
     depends_on:
       - server
     networks:
       - charging_network
-    stdin_open: true       # <- mantém STDIN aberto
-    tty: true              # <- aloca terminal pseudo-TTY
-
+    stdin_open: true
+    tty: true
 
   charge-point:
-    build: ./app/charge-point
+    build:
+      context: ./app/charge-point
+      dockerfile: Dockerfile-charge-point
     depends_on:
       - server
     networks:

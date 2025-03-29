@@ -1,4 +1,6 @@
 import socket
+from services.localizacao import atualizar_posicao, obter_posicao
+
 
 HOST = 'server'  # Nome do serviço dentro do Docker Compose
 PORT = 5000      # Porta do servidor
