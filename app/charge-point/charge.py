@@ -1,36 +1,46 @@
 import socket
 import time
+from services.controle import aceitar_carregamento
+from services.monitoramento import logar_evento
 
-HOST = 'server'  # Nome do serviço dentro do Docker Compose
-PORT = 5000      # Porta do servidor
+
+HOST = 'server'  # Nome do serviço no Docker Compose
+PORT = 5000      # Porta usada pelo servidor
 
 def connect_to_server():
-    """Estabelece conexão com o servidor e espera comandos."""
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as charge_point:
-            charge_point.connect((HOST, PORT))
-            print("[CONECTADO] Ponto de carregamento pronto para receber comandos.")
-
-            while True:
-                charge_point.send("STATUS".encode())  # Pergunta ao servidor se há comandos
+    """Conecta ao servidor repetidamente para verificar comandos."""
+    print("[INICIANDO] Ponto de carregamento online.")
+    
+    while True:
+        try:
+            # Envia STATUS
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as charge_point:
+                charge_point.connect((HOST, PORT))
+                print("[CONECTADO] Verificando instruções do servidor...")
+                charge_point.send("STATUS".encode())
                 response = charge_point.recv(1024).decode()
-                
-                if response == "START":
-                    print("[CARREGANDO] Iniciando o carregamento do veículo...")
-                    time.sleep(5)  # Simula o tempo de carregamento
-                    print("[COMPLETO] Carregamento finalizado.")
-                    charge_point.send("COMPLETE".encode())  # Informa ao servidor que terminou
-                elif response == "STOP":
-                    print("[PARADO] Carregamento interrompido.")
-                    break
-                else:
-                    print("[AGUARDANDO] Nenhum comando recebido.")
-                    time.sleep(2)  # Aguarda antes de perguntar novamente
-    except ConnectionRefusedError:
-        print("[ERRO] Não foi possível conectar ao servidor. Verifique se ele está rodando.")
-    except Exception as e:
-        print(f"[ERRO] Ocorreu um problema: {e}")
+
+            # Lida com a resposta
+            if aceitar_carregamento():
+                print("[CARREGANDO] Iniciando o carregamento do veículo...")
+                time.sleep(5)
+                print("[COMPLETO] Carregamento finalizado.")
+                logar_evento("Carregamento concluído com sucesso.")
+
+                # Envia mensagem de COMPLETE ao servidor
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as cp_complete:
+                    cp_complete.connect((HOST, PORT))
+                    cp_complete.send("COMPLETE".encode())
+            else:
+                print("[NEGADO] Carregamento não autorizado pelo controle.")
+
+
+        except ConnectionRefusedError:
+            print("[ERRO] Não foi possível conectar ao servidor. Verifique se ele está rodando.")
+            time.sleep(2)
+        except Exception as e:
+            print(f"[ERRO] Ocorreu um problema: {e}")
+            time.sleep(2)
 
 if __name__ == "__main__":
-    print("[INICIANDO] Ponto de carregamento online.")
     connect_to_server()

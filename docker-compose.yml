@@ -12,6 +12,9 @@ services:
       - server
     networks:
       - charging_network
+    stdin_open: true       # <- mantém STDIN aberto
+    tty: true              # <- aloca terminal pseudo-TTY
+
 
   charge-point:
     build: ./app/charge-point
