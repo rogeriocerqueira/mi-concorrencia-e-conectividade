@@ -1,34 +1,46 @@
-import socket
-from services.localizacao import atualizar_posicao, obter_posicao
+# client.py - atualizado para usar ClienteSocket
+
+from services.comunicacao import ClienteSocket
+from services.localizacao import posicao_atual
+
+HOST = "server"
+PORT = 5000
+
+cliente = ClienteSocket(HOST, PORT)
 
 
-HOST = 'server'  # Nome do serviço dentro do Docker Compose
-PORT = 5000      # Porta do servidor
+def enviar_posicao():
+    cliente.enviar(f"POSICAO:{posicao_atual}")
+    print(cliente.receber())
 
-def send_command(command):
-    """Envia um comando ao servidor e exibe a resposta."""
+
+def send_command(cmd):
+    cliente.enviar(cmd)
+    resposta = cliente.receber()
+    print("Resposta do servidor:", resposta)
+
+
+def main():
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
-            client.connect((HOST, PORT))
-            client.send(command.encode())
+        cliente.conectar()
+        print("Cliente conectado. Digite 'START' para iniciar o carregamento, 'STOP' para parar ou 'EXIT' para sair.")
 
-            response = client.recv(1024).decode()
-            print(f"Resposta do servidor: {response}")
-    except ConnectionRefusedError:
-        print("[ERRO] Não foi possível conectar ao servidor. Verifique se ele está rodando.")
+        while True:
+            cmd = input("> ").strip().upper()
+
+            if cmd == "EXIT":
+                print("Saindo do cliente...")
+                break
+            elif cmd.startswith("POSICAO:") or cmd in ["START", "STOP"]:
+                send_command(cmd)
+            else:
+                print("Comando inválido. Use 'POSICAO:<número>', 'START', 'STOP' ou 'EXIT'.")
+
     except Exception as e:
-        print(f"[ERRO] Ocorreu um problema: {e}")
+        print("Erro ao se conectar com o servidor:", e)
+    finally:
+        cliente.fechar()
+
 
 if __name__ == "__main__":
-    print("Cliente conectado. Digite 'START' para iniciar o carregamento, 'STOP' para parar ou 'EXIT' para sair.")
-
-    while True:
-        cmd = input("> ").strip().upper()
-
-        if cmd == "EXIT":
-            print("Saindo do cliente...")
-            break
-        elif cmd.startswith("POSICAO:") or cmd in ["START", "STOP"]:
-            send_command(cmd)
-        else:
-            print("Comando inválido. Use 'POSICAO:<número>', 'START', 'STOP' ou 'EXIT'.")
+    main()

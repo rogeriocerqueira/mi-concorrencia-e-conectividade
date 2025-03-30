@@ -1,18 +1,27 @@
-# server.py - atualizado para se comunicar com charge-points via socket
+# server.py - logs agora usam origem "SERVER" para o monitoramento
 
 import socket
 import threading
+import time
+from datetime import datetime
 
 HOST = '0.0.0.0'
 PORT = 5000
 
 posicoes_clientes = {}
-conexoes_charge_points = {}  # nome -> socket
+conexoes_charge_points = {}
 postos_de_recarga = {
     "charge-point-1": 10,
     "charge-point-2": 50,
     "charge-point-3": 90
 }
+
+def log_evento(texto):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    linha = f"[{timestamp}] [SERVER] {texto}"
+    print(linha)
+    with open("log.txt", "a") as f:
+        f.write(linha + "\n")
 
 def posto_mais_proximo(posicao_cliente):
     menor_dist = float('inf')
@@ -25,7 +34,7 @@ def posto_mais_proximo(posicao_cliente):
     return escolhido
 
 def handle_client(conn, addr):
-    print(f"[NOVA CONEXÃO] Conectado a {addr}")
+    log_evento(f"[NOVA CONEXÃO] Conectado a {addr}")
 
     try:
         identificacao = conn.recv(1024).decode().strip()
@@ -33,12 +42,15 @@ def handle_client(conn, addr):
         if identificacao.startswith("CHARGE-POINT:"):
             nome = identificacao.split(":")[1]
             conexoes_charge_points[nome] = conn
-            print(f"[REGISTRO] {nome} registrado como charge-point.")
+            log_evento(f"[REGISTRO] {nome} registrado como charge-point.")
             while True:
-                pass  # Mantém a conexão viva
+                time.sleep(1)
+
+        elif identificacao.startswith("COMPLETE:"):
+            nome = identificacao.split(":")[1]
+            log_evento(f"[FINALIZADO] {nome} completou o carregamento.")
 
         else:
-            # Cliente comum
             while True:
                 data = identificacao if identificacao else conn.recv(1024).decode().strip()
                 identificacao = None
@@ -50,8 +62,7 @@ def handle_client(conn, addr):
                     if addr in posicoes_clientes:
                         posicao = posicoes_clientes[addr]
                         posto = posto_mais_proximo(posicao)
-                        print(f"[DECISÃO] Cliente {addr} em {posicao} -> {posto}")
-                        # Envia START para o charge-point via socket
+                        log_evento(f"[DECISÃO] Cliente {addr} em {posicao} -> {posto}")
                         if posto in conexoes_charge_points:
                             try:
                                 conexoes_charge_points[posto].send("START".encode())
@@ -70,7 +81,7 @@ def handle_client(conn, addr):
                     try:
                         pos = int(data.split(":")[1])
                         posicoes_clientes[addr] = pos
-                        print(f"[POSIÇÃO] {addr} está na posição {pos}")
+                        log_evento(f"[POSIÇÃO] {addr} está na posição {pos}")
                         response = "Posição registrada"
                     except:
                         response = "Formato inválido. Use POSICAO:<número>"
@@ -80,17 +91,17 @@ def handle_client(conn, addr):
                 conn.send(response.encode())
 
     except Exception as e:
-        print(f"[ERRO] Problema com {addr}: {e}")
+        log_evento(f"[ERRO] Problema com {addr}: {e}")
 
     finally:
         conn.close()
-        print(f"[DESCONECTADO] {addr} desconectado.")
+        log_evento(f"[DESCONECTADO] {addr} desconectado.")
 
 def start_server():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
         s.listen()
-        print(f"[SERVIDOR RODANDO] Porta {PORT}...")
+        log_evento(f"[SERVIDOR RODANDO] Porta {PORT}...")
         while True:
             conn, addr = s.accept()
             thread = threading.Thread(target=handle_client, args=(conn, addr))

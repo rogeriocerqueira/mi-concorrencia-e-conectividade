@@ -1,7 +1,16 @@
-# services/monitoramento.py
+# monitoramento.py - atualizado para salvar logs em log.txt com origem personalizada
 from datetime import datetime
+import os
 
-def logar_evento(evento: str):
-    """Registra eventos da estação de carga com timestamp."""
+ARQUIVO_LOG = os.getenv("LOG_PATH", "log.txt")
+
+
+def logar_evento(evento: str, origem: str = "CHARGE-POINT"):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[MONITORAMENTO] {timestamp} - {evento}")
+    log = f"[{timestamp}] [{origem}] {evento}"
+    print(log)
+    try:
+        with open(ARQUIVO_LOG, "a") as f:
+            f.write(log + "\n")
+    except Exception as e:
+        print(f"[ERRO] Falha ao salvar log em arquivo: {e}")
