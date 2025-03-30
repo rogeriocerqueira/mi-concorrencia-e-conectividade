@@ -1,4 +1,4 @@
-# charge.py - atualizado para usar origem=NOME_CHARGE_POINT nos logs
+# charge.py - corrigido para não sobrescrever NOME_CHARGE_POINT
 
 import socket
 import time
@@ -7,7 +7,7 @@ from services import controle, monitoramento
 
 HOST = "server"
 PORT = 5000
-NOME_CHARGE_POINT = os.getenv("CHARGE_POINT_NAME", "charge-point-1")
+NOME_CHARGE_POINT = os.getenv("NOME_CHARGE_POINT", "charge-point-1")
 
 def connect_to_server():
     while True:

@@ -1,9 +1,11 @@
-FROM python:3.12.3
+# Dockerfile para os charge-points
+FROM python:3.10-slim
 
 WORKDIR /app
-
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt || true
+# Variável de ambiente padrão (pode ser sobrescrita pelo docker-compose)
+ENV NOME_CHARGE_POINT=charge-point-1
 
-CMD ["python", "charge.py"]
+# CMD padrão inicia o script
+CMD ["python3", "charge.py"]
