@@ -1,46 +1,33 @@
-# client.py - atualizado para usar ClienteSocket
+# client.py - atualizado para envio automático da posição a cada 60 segundos
 
+import time
+import random
 from services.comunicacao import ClienteSocket
-from services.localizacao import posicao_atual
 
 HOST = "server"
 PORT = 5000
 
 cliente = ClienteSocket(HOST, PORT)
 
-
-def enviar_posicao():
-    cliente.enviar(f"POSICAO:{posicao_atual}")
-    print(cliente.receber())
-
-
-def send_command(cmd):
-    cliente.enviar(cmd)
-    resposta = cliente.receber()
-    print("Resposta do servidor:", resposta)
-
-
-def main():
+def enviar_posicao_automatica():
     try:
         cliente.conectar()
-        print("Cliente conectado. Digite 'START' para iniciar o carregamento, 'STOP' para parar ou 'EXIT' para sair.")
+        print("[CLIENTE] Conectado ao servidor. Iniciando envio automático de posição...")
 
         while True:
-            cmd = input("> ").strip().upper()
-
-            if cmd == "EXIT":
-                print("Saindo do cliente...")
-                break
-            elif cmd.startswith("POSICAO:") or cmd in ["START", "STOP"]:
-                send_command(cmd)
-            else:
-                print("Comando inválido. Use 'POSICAO:<número>', 'START', 'STOP' ou 'EXIT'.")
+            posicao = random.randint(0, 100)
+            cliente.enviar(f"POSICAO:{posicao}")
+            resposta = cliente.receber()
+            print(f"[CLIENTE] Posição enviada: {posicao} | Posto mais próximo: {resposta}")
+            time.sleep(60)  # Aguarda 60 segundos
 
     except Exception as e:
-        print("Erro ao se conectar com o servidor:", e)
+        print("[ERRO] Falha na conexão com o servidor:", e)
     finally:
         cliente.fechar()
 
-
 if __name__ == "__main__":
-    main()
+    try:
+        enviar_posicao_automatica()
+    except KeyboardInterrupt:
+        print("\n[CLIENTE] Encerrando cliente.")
