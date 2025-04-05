@@ -21,6 +21,31 @@ services:
     networks:
       - charging_network
 
+  client-2:
+    build:
+      context: ./app/client
+      dockerfile: Dockerfile-client
+    container_name: client-2
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
+    networks:
+      - charging_network
+
+  client-3:
+    build:
+      context: ./app/client
+      dockerfile: Dockerfile-client
+    container_name: client-3
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
+    networks:
+      - charging_network
+
+
   charge-point-1:
     build:
       context: ./app/charge-point
