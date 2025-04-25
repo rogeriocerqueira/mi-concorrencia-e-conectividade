@@ -1,0 +1,36 @@
+Meta::
+
+
+
+
+Usar Mosquitto Pesquisar e aplicar no PBL
+● Fazer comunicação servidor-servidor
+● Fazer o teste de mesa da comunicação do sistema
+
+● Pensar nas requisições HTTPS  (Verbos) [Não obrigatórias]
+
+
+           +---------------------+
+           |     BROKER MQTT     |
+           |   (ex: Mosquitto)   |
+           +---------+-----------+
+                     |
+        +------------+------------+
+        |                         |
++------------------+     +---------------------+
+| Cliente (carro)  |     |   Servidor lógico   |
+| Publica posição  |     | Escuta posição,     |
+| /clientes/X/pos  |     | publica comandos    |
++------------------+     +---------------------+
+        |
+        |                         |
++------------------+     +---------------------+
+| Charge-point     |<----|  Publica comando:   |
+| Escuta comando   |     | /comandos/charge-1  |
++------------------+     +---------------------+
+
+
+● Lembrar as questões de atomicidade
+
+●  Programação/Sistema distribuído.  
+

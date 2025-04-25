@@ -4,3 +4,5 @@ docker compose logs  -f recarga-cliente-1            :: Organiza os eventos de l
 docker compose -p recarga down
 docker compose -p recarga up --build -d client-2 client-3 # Subir clientes individualmente
 
+source venv/bin/activate                             :: Ativa o ambiente venv na máquina
+

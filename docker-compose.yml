@@ -82,6 +82,20 @@ services:
     environment:
       - NOME_CHARGE_POINT=charge-point-3
 
+
+    mosquitto:
+      image: eclipse-mosquitto
+      container_name: mosquitto
+      ports:
+        - "1883:1883"
+        - "9001:9001"
+      volumes:
+        - ./mosquitto/config:/mosquitto/config
+        - ./mosquitto/data:/mosquitto/data
+        - ./mosquitto/log:/mosquitto/log
+
+
 networks:
   charging_network:
     driver: bridge
+

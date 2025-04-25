@@ -25,3 +25,37 @@ log.txt
 build/
 dist/
 *.egg-info/
+
+# Ignore ambientes virtuais
+venv/
+.env/
+
+# Ignore arquivos de configuração locais
+*.env
+
+# Ignore arquivos __pycache__ e logs Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore arquivos de log
+*.log
+logs/
+server/logs/
+charge-point/logs/
+client/logs/
+
+# Ignore dados do Mosquitto
+mosquitto/data/
+mosquitto/log/
+
+# Ignore configurações específicas do editor (VSCode, etc.)
+.vscode/
+.idea/
+
+# Ignore arquivos temporários e de sistema
+.DS_Store
+Thumbs.db
+
+

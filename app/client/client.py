@@ -1,57 +1,31 @@
-# client.py - atualizado com envio de reservas manuais via terminal
+# client.py - cliente principal (refatorado)
 
+import json
 import time
-import random
-from services.comunicacao import ClienteSocket
+from services.bateria import GerenciadorBateria
+from services.comunicacao_rest import ClienteREST
+from services.comunicacao_mqtt import ClienteMQTT
 
-HOST = "server"
-PORT = 5000
+# Carrega configurações
+with open("config/settings.json") as f:
+    config = json.load(f)
 
-cliente = ClienteSocket(HOST, PORT)
+modo = config["modo"]
+cliente_id = config["cliente_id"]
+posicao = config["posicao_inicial"]
 
-def enviar_posicao_automatica():
-    try:
-        cliente.conectar()
-        print("[CLIENTE] Conectado ao servidor. Iniciando envio automático de posição...")
+# Inicializa o modo de comunicação
+comunicador = ClienteREST(cliente_id) if modo == "REST" else ClienteMQTT(cliente_id)
 
-        while True:
-            posicao = random.randint(0, 100)
-            cliente.enviar(f"POSICAO:{posicao}")
-            resposta = cliente.receber()
-            print(f"[CLIENTE] Posição enviada: {posicao} | ⛽ Posto mais próximo: {resposta}")
-            time.sleep(60)
+# Inicializa o gerenciador de bateria e reserva
+bateria = GerenciadorBateria(cliente_id, comunicador)
 
-    except Exception as e:
-        print("[ERRO] Falha na conexão com o servidor:", e)
-    finally:
-        cliente.fechar()
+print(f"[CLIENTE] Iniciando com modo {modo}...")
 
-def realizar_reserva():
-    try:
-        cliente.conectar()
-        print("[CLIENTE] Modo reserva iniciado.")
-        while True:
-            entrada = input("Digite RESERVAR:<data>:<hora>:<posto> ou 'sair': ").strip()
-            if entrada.lower() == "sair":
-                break
-            if entrada.startswith("RESERVAR:"):
-                cliente.enviar(entrada)
-                resposta = cliente.receber()
-                print(f"[CLIENTE] {resposta}")
-            else:
-                print("[CLIENTE] Formato inválido. Use: RESERVAR:dd/mm/yyyy:HH:MM:charge-point-x")
+while True:
+    print(f"[CLIENTE] Posição atual: {posicao} | Bateria: {bateria.nivel}%")
 
-    except Exception as e:
-        print("[ERRO] Falha na reserva:", e)
-    finally:
-        cliente.fechar()
+    comunicador.enviar_posicao(posicao)
+    bateria.verificar_bateria()
 
-if __name__ == "__main__":
-    print("[CLIENTE] 1 - Enviar posição automática\n[CLIENTE] 2 - Fazer reserva manual")
-    opcao = input("Escolha uma opção: ").strip()
-    if opcao == "1":
-        enviar_posicao_automatica()
-    elif opcao == "2":
-        realizar_reserva()
-    else:
-        print("[CLIENTE] Opção inválida.")
+    time.sleep(60)

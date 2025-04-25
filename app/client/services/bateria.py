@@ -1,11 +1,13 @@
-import time
+# bateria.py - controle de bateria e reserva
 
-def carregar_bateria(nivel_atual):
-    print("[RECARGA] Iniciando recarga da bateria...")
-    while nivel_atual < 100:
-        time.sleep(30)  # Simula 30 segundos de carregamento
-        nivel_atual = min(100, nivel_atual + 10)
-        print(f"[RECARGA] Nível atual: {nivel_atual}%")
+class GerenciadorBateria:
+    def __init__(self, cliente_id, comunicador):
+        self.nivel = 100
+        self.cliente_id = cliente_id
+        self.comunicador = comunicador
 
-    print("[RECARGA] Bateria totalmente carregada!")
-    return nivel_atual
+    def verificar_bateria(self):
+        self.nivel = max(0, self.nivel - 10)
+        if self.nivel <= 20:
+            print("[CLIENTE] Bateria crítica! Solicitando reserva...")
+            self.comunicador.solicitar_reserva()
