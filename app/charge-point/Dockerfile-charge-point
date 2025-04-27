@@ -1,11 +1,9 @@
-# Dockerfile para os charge-points
 FROM python:3.12.3-slim
 
 WORKDIR /app
-COPY . .
 
-# Variável de ambiente padrão (pode ser sobrescrita pelo docker-compose)
-ENV NOME_CHARGE_POINT=charge-point-1
+COPY charge_point.py .
 
-# CMD padrão inicia o script
-CMD ["python3", "charge.py"]
+RUN pip install paho-mqtt
+
+CMD ["python3", "charge_point.py"]

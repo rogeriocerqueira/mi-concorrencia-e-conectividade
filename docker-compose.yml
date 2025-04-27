@@ -1,101 +1,19 @@
 services:
-  server:
-    build:
-      context: ./app/server
-      dockerfile: Dockerfile-server
-    container_name: server
+  broker_ba:
+    image: eclipse-mosquitto
+    container_name: broker_ba
     ports:
-      - "5000:5000"
-    networks:
-      - charging_network
+      - "1884:1883"
+    volumes:
+      - ./app/mosquitto/BA:/mosquitto/config
 
-  client:
+
+  server_ba:
     build:
-      context: ./app/client
-      dockerfile: Dockerfile-client
-    container_name: client-1
+      context: ./app/server/BA
+      dockerfile: Dockerfile-server
     depends_on:
-      - server
-    stdin_open: true
-    tty: true
-    networks:
-      - charging_network
-
-  client-2:
-    build:
-      context: ./app/client
-      dockerfile: Dockerfile-client
-    container_name: client-2
-    stdin_open: true
-    tty: true
-    depends_on:
-      - server
-    networks:
-      - charging_network
-
-  client-3:
-    build:
-      context: ./app/client
-      dockerfile: Dockerfile-client
-    container_name: client-3
-    stdin_open: true
-    tty: true
-    depends_on:
-      - server
-    networks:
-      - charging_network
-
-
-  charge-point-1:
-    build:
-      context: ./app/charge-point
-      dockerfile: Dockerfile-charge-point
-    container_name: charge-point-1
-    depends_on:
-      - server
-    networks:
-      - charging_network
-    environment:
-      - NOME_CHARGE_POINT=charge-point-1
-
-  charge-point-2:
-    build:
-      context: ./app/charge-point
-      dockerfile: Dockerfile-charge-point
-    container_name: charge-point-2
-    depends_on:
-      - server
-    networks:
-      - charging_network
-    environment:
-      - NOME_CHARGE_POINT=charge-point-2
-
-  charge-point-3:
-    build:
-      context: ./app/charge-point
-      dockerfile: Dockerfile-charge-point
-    container_name: charge-point-3
-    depends_on:
-      - server
-    networks:
-      - charging_network
-    environment:
-      - NOME_CHARGE_POINT=charge-point-3
-
-
-    mosquitto:
-      image: eclipse-mosquitto
-      container_name: mosquitto
-      ports:
-        - "1883:1883"
-        - "9001:9001"
-      volumes:
-        - ./mosquitto/config:/mosquitto/config
-        - ./mosquitto/data:/mosquitto/data
-        - ./mosquitto/log:/mosquitto/log
-
-
-networks:
-  charging_network:
-    driver: bridge
+      - broker_ba
+    ports:
+      - "5001:5000"
 

@@ -1,8 +1,0 @@
-docker compose -p recarga --volumes --remove-orphans :: remove os container e pelo que eu entendi limpa os resíduais caches
-docker compose -p recarga up --build                 :: Constroi as img e inicia os containers
-docker compose logs  -f recarga-cliente-1            :: Organiza os eventos de log
-docker compose -p recarga down
-docker compose -p recarga up --build -d client-2 client-3 # Subir clientes individualmente
-
-source venv/bin/activate                             :: Ativa o ambiente venv na máquina
-
