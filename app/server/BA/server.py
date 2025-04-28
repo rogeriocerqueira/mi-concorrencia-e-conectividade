@@ -9,7 +9,7 @@ broker_address = "broker_ba"
 broker_port = 1884
 
 # Inicializa o cliente MQTT
-client = mqtt.Client(client_id="server_ba", protocol=mqtt.MQTTv311, callback_api_version=5)
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id="server_ba", protocol=mqtt.MQTTv311)
 client.connect(broker_address, broker_port, 60)
 
 @app.route('/reservar', methods=['POST'])

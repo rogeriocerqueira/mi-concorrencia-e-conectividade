@@ -1,19 +1,24 @@
+version: '3.9'
 services:
+
+  # BROKER CENTRAL
+  broker_central:
+    image: eclipse-mosquitto
+    container_name: broker_central
+    ports:
+      - "1883:1883"  # Mapeia para a máquina host
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+  # BROKER BA
   broker_ba:
     image: eclipse-mosquitto
     container_name: broker_ba
     ports:
       - "1884:1883"
     volumes:
-      - ./app/mosquitto/BA:/mosquitto/config
-
-
-  server_ba:
-    build:
-      context: ./app/server/BA
-      dockerfile: Dockerfile-server
-    depends_on:
-      - broker_ba
-    ports:
-      - "5001:5000"
-
+      - ./app/mosquitto/BA/config:/mosquitto/config
+      - ./app/mosquitto/BA/data:/mosquitto/data
+      - ./app/mosquitto/BA/log:/mosquitto/log
