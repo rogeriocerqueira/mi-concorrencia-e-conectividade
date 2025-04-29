@@ -1,0 +1,95 @@
+
++---------------------------------------+
+Autenticação Git Hub via Vs Code
++---------------------------------------+
+
+git config user.name "Seu Nome"
+git config user.email "seu.email@exemplo.com"
+
+
+
++---------------------------------------+
+
+  Comandos Docker
+
++---------------------------------------+
+
+docker compose down --volumes --remove-orphans                                  :: remove os container e pelo que eu entendi limpa os resíduais caches
+docker compose -p recarga up --build                                            :: Constroi as img e inicia os containers
+docker compose logs  -f recarga-cliente-1                                       :: Organiza os eventos de log
+docker compose -p recarga down                                                  :: Para o container em execução 
+docker compose -p recarga up --build -d client-2 client-3                       :: Subir clientes individualmente
+docker stop recarga-client-1                                                    :: Exclui o container 
+
+
+
+docker ps -a                                                                    :: Status do container 
+docker logs <nome ou id do container>                                           :: Analisar os logs de eventos do container
+
+
+
+docker compose down --volumes                                                   :: Apaga os volumes
+docker volume prune                                                             :: Apaga todos os volumes orfão antes 
+
+
+
++---------------------------------------+
+
+Comandos de Instalação Pip3 + Framewhorks
+
++---------------------------------------+
+sudo apt install python3-pip
+pip3 --version
+pip install flask paho-mqtt
+
+
++---------------------------------------+
+
+Comandos de Configuração do Venv Pip3
+
++---------------------------------------+
+python3 -m venv venv                                 :: Criar o ambiente virtual venv
+source venv/bin/activate                             :: Ativar o ambiente venv na máquina
+deactivate                                           :: Desativar o ambiente venv na máquina
+
+
+
+
+
+
++---------------------------------------+
+
+Comandos de Configuração de Redes
+
++---------------------------------------+
+
+sudo lsof -i :1883                                :: Descobrir quem e quais serviços estão usando a porta no momento
+sudo systemctl stop mosquitto                     :: Desativa o serviço que está usando no momento
+
+sudo netstat -tulnp | grep 1883                   :: Verifica se voltou a usar a porta 
+
+
+
++---------------------------------------+
+Ativa as permissões para o usuário 
+
++---------------------------------------+
+sudo chown -R $USER:$USER app/mosquitto/BA        :: Devolve a posse do diretório e arquivos para você
+sudo chmod -R u+rw app/mosquitto/BA               :: Garante permissão de leitura e escrita para seu usuário        
+
++---------------------------------------+
+Ativa as arquivo bash.sh 
++---------------------------------------+
+
+cd caminho_para_o_arquivo/ajustar_permissoes.sh    :: Vá para o caminho do seu arquivo bash.sh
+chmod +x ajustar_permissoes.sh                     :: Concede permissões ao usuario de leitura e escrita
+./ajustar_permissoes.sh                            :: Rode o arquivo uma vez que está no diretório do mesmo
+
+
+
+
+
+
+
+
+
