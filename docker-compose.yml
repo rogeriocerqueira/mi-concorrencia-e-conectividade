@@ -1,37 +1,16 @@
 services:
-
-  # BROKER CENTRAL
-  broker_central:
-    image: eclipse-mosquitto
-    container_name: broker_central
-    ports:
-      - "1883:1883"  # Mapeia para a máquina host
-    volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
-
   # BROKER BA
   broker_ba:
     image: eclipse-mosquitto
     container_name: broker_ba
     ports:
-      - "1884:1883"
-    volumes:
-      - ./app/mosquitto/BA/config:/mosquitto/config
-      - ./app/mosquitto/BA/data:/mosquitto/data
-      - ./app/mosquitto/BA/log:/mosquitto/log
+      - "1883:1884"
+      - "1884:1884"
 
- # BROKER MA
-  broker_ma:
-    image: eclipse-mosquitto
-    container_name: broker_ma
-    ports:
-      - "1885:1883"
     volumes:
-      - ./app/mosquitto/MA/config:/mosquitto/config
-      - ./app/mosquitto/MA/data:/mosquitto/data
-      - ./app/mosquitto/MA/log:/mosquitto/log
+      - ./brokers/BA/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./brokers/BA/data:/mosquitto/data
+      - ./brokers/BA/log:/mosquitto/log
 
   # BROKER SE
   broker_se:
@@ -40,6 +19,17 @@ services:
     ports:
       - "1886:1883"
     volumes:
-      - ./app/mosquitto/SE/config:/mosquitto/config
-      - ./app/mosquitto/SE/data:/mosquitto/data
-      - ./app/mosquitto/SE/log:/mosquitto/log
+      - ./brokers/SE/config:/brokers/config
+      - ./brokers/SE/data:/brokers/data
+      - ./brokers/SE/log:/brokers/log
+
+ # BROKER MA
+  broker_ma:
+    image: eclipse-mosquitto
+    container_name: broker_ma
+    ports:
+      - "1885:1883"
+    volumes:
+      - ./brokers/MA/config:/brokers/config
+      - ./brokers/MA/data:/brokers/data
+      - ./brokers/MA/log:/brokers/log
