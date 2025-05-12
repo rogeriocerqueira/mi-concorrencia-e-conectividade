@@ -1,35 +1,42 @@
+
 services:
-  # BROKER BA
   broker_ba:
     image: eclipse-mosquitto
     container_name: broker_ba
     ports:
-      - "1883:1884"
+      - "1883:1883"
       - "1884:1884"
-
     volumes:
       - ./brokers/BA/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ./brokers/BA/data:/mosquitto/data
       - ./brokers/BA/log:/mosquitto/log
+    networks:
+      - mqtt-net
 
-  # BROKER SE
   broker_se:
     image: eclipse-mosquitto
     container_name: broker_se
     ports:
       - "1886:1883"
     volumes:
-      - ./brokers/SE/config:/brokers/config
-      - ./brokers/SE/data:/brokers/data
-      - ./brokers/SE/log:/brokers/log
+      - ./brokers/SE/config:/mosquitto/config
+      - ./brokers/SE/data:/mosquitto/data
+      - ./brokers/SE/log:/mosquitto/log
+    networks:
+      - mqtt-net
 
- # BROKER MA
   broker_ma:
     image: eclipse-mosquitto
     container_name: broker_ma
     ports:
       - "1885:1883"
     volumes:
-      - ./brokers/MA/config:/brokers/config
-      - ./brokers/MA/data:/brokers/data
-      - ./brokers/MA/log:/brokers/log
+      - ./brokers/MA/config:/mosquitto/config
+      - ./brokers/MA/data:/mosquitto/data
+      - ./brokers/MA/log:/mosquitto/log
+    networks:
+      - mqtt-net
+
+networks:
+  mqtt-net:
+    external: true

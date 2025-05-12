@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script para corrigir permissões dos diretórios Mosquitto
-# Autor: Rogério (gerado via ChatGPT)
+# Autor: Rogério Cerqueira
 
 echo "Corrigindo permissões da pasta app/mosquitto/BA..."
 sudo chown -R $USER:$USER app/mosquitto/BA
