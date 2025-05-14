@@ -49,6 +49,7 @@ Comandos de Configuração do Venv Pip3
 python3 -m venv venv                                                           :: Criar o ambiente virtual venv
 source venv/bin/activate                                                       :: Ativar o ambiente venv na máquina
 deactivate                                                                     :: Desativar o ambiente venv na máquina
+rm -r venv                                                                     :: Remover o ambiente
 
 +---------------------------------------+
 

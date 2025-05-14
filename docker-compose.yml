@@ -1,4 +1,3 @@
-
 services:
   broker_ba:
     image: eclipse-mosquitto
@@ -13,30 +12,151 @@ services:
     networks:
       - mqtt-net
 
-  broker_se:
-    image: eclipse-mosquitto
-    container_name: broker_se
-    ports:
-      - "1886:1883"
-    volumes:
-      - ./brokers/SE/config:/mosquitto/config
-      - ./brokers/SE/data:/mosquitto/data
-      - ./brokers/SE/log:/mosquitto/log
-    networks:
-      - mqtt-net
-
   broker_ma:
     image: eclipse-mosquitto
     container_name: broker_ma
     ports:
       - "1885:1883"
+      - "1886:1884"
     volumes:
-      - ./brokers/MA/config:/mosquitto/config
+      - ./brokers/MA/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ./brokers/MA/data:/mosquitto/data
       - ./brokers/MA/log:/mosquitto/log
+    networks:
+      - mqtt-net
+
+  broker_se:
+    image: eclipse-mosquitto
+    container_name: broker_se
+    ports:
+      - "1887:1883"
+      - "1888:1884"
+    volumes:
+      - ./brokers/SE/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./brokers/SE/data:/mosquitto/data
+      - ./brokers/SE/log:/mosquitto/log
+    networks:
+      - mqtt-net
+
+
+  server_ba:
+    build:
+      context: ./app/server/BA/
+      dockerfile: Dockerfile-server
+    container_name: server_ba
+    ports:
+      - "5000:5000"
+    networks:
+      - mqtt-net
+    depends_on:
+      - broker_ba
+
+  server_ma:
+    build:
+      context: ./app/server/MA/
+      dockerfile: Dockerfile-server
+    container_name: server_ma
+    ports:
+      - "5001:5000"
+    networks:
+      - mqtt-net
+    depends_on:
+      - broker_ma
+
+  server_se:
+    build:
+      context: ./app/server/SE/
+      dockerfile: Dockerfile-server
+    container_name: server_se
+    ports:
+      - "5002:5000"
+    networks:
+      - mqtt-net
+    depends_on:
+      - broker_se
+
+
+  charge-point-1:
+    build:
+      context: ./app/charge-point/BA/charge-point-1
+      dockerfile: Dockerfile-charge-point-1
+    container_name: charge-point-1
+    depends_on:
+      - broker_ba
+      - server_ba
+    networks:
+      - mqtt-net
+
+  charge-point-2:
+    build:
+      context: ./app/charge-point/BA/charge-point-2
+      dockerfile: Dockerfile-charge-point-2
+    container_name: charge-point-2
+    depends_on:
+      - broker_ba
+      - server_ba
+    networks:
+      - mqtt-net
+
+  charge-point-3:
+    build:
+      context: ./app/charge-point/BA/charge-point-3
+      dockerfile: Dockerfile-charge-point-3
+    container_name: charge-point-3
+    depends_on:
+      - broker_ba
+      - server_ba
+    networks:
+      - mqtt-net
+
+
+  charge-point-4:
+    build:
+      context: ./app/charge-point/BA/charge-point-4
+      dockerfile: Dockerfile-charge-point-4
+    container_name: charge-point-4
+    depends_on:
+      - broker_ba
+      - server_ba
+    networks:
+      - mqtt-net
+
+
+  charge-point-5:
+    build:
+      context: ./app/charge-point/BA/charge-point-5
+      dockerfile: Dockerfile-charge-point-5
+    container_name: charge-point-5
+    depends_on:
+      - broker_ba
+      - server_ba
+    networks:
+      - mqtt-net
+
+  
+  charge-point-ma-1:
+    build:
+      context: ./app/charge-point/MA/charge-point-1
+      dockerfile: Dockerfile-charge-point-1
+    container_name: charge-point-ma-1
+    depends_on:
+      - broker_ma
+      - server_ma
+    networks:
+      - mqtt-net
+
+  charge-point-se-1:
+    build:
+      context: ./app/charge-point/SE/charge-point-1
+      dockerfile: Dockerfile-charge-point-1
+    container_name: charge-point-se-1
+    depends_on:
+      - broker_se
+      - server_se
     networks:
       - mqtt-net
 
 networks:
   mqtt-net:
     external: true
+    driver: bridge

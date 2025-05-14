@@ -1,42 +1,52 @@
 import paho.mqtt.client as mqtt
 import time
+import requests
 
-# Configurações
-broker_address = "broker_ba"  # Atenção: alterar conforme a região!
+broker_address = "broker_ba"
 broker_port = 1883
-client_id = "charge-point-5"  # Nome do posto de recarga
+client_id = "charge-point-5"
 
-# Inicializa o cliente MQTT
-client = mqtt.Client(client_id)
+server_address = "server_ba"
+server_port = 5000
+server_endpoint = f"http://{server_address}:{server_port}/atualizar_status"
 
-# Conecta no broker
-client.connect(broker_address, broker_port, 60)
+# Usando API de callback versão 2
+client = mqtt.Client(client_id=client_id, callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
+client.connect("broker_ba", 1883, 60)
+
+def notify_server(status):
+    data = {"posto": client_id, "status": status}
+    try:
+        response = requests.post(server_endpoint, json=data)
+        print(f"[HTTP] Status enviado ao servidor: {response.status_code} - {response.text}")
+    except Exception as e:
+        print(f"[HTTP] Erro ao enviar status: {e}")
 
 def publish_status(status):
     topic = f"status/{client_id}"
     client.publish(topic, status)
-    print(f"Publicando no tópico {topic}: {status}")
+    print(f"[MQTT] Publicando no tópico {topic}: {status}")
+    notify_server(status)
 
-# Quando receber um comando
-def on_message(client, userdata, message):
+# Assinatura atualizada do callback (versão 2.0)
+def on_message(client, userdata, message, properties=None):
     comando = str(message.payload.decode("utf-8"))
-    print(f"Recebido comando: {comando}")
-
+    print(f"[MQTT] Comando recebido: {comando}")
     if comando == "start":
         publish_status("Carregando")
     elif comando == "stop":
         publish_status("Livre")
     else:
-        print("Comando desconhecido.")
+        print("[MQTT] Comando desconhecido.")
 
-# Inscreve para escutar comandos
+# Definir callback de mensagem
 client.subscribe(f"command/{client_id}")
 client.on_message = on_message
 
-# Publica status inicial
+# Publicar status inicial
 publish_status("Livre")
 
-# Inicia o loop para escutar mensagens
+# Iniciar loop MQTT
 client.loop_start()
 
 try:

@@ -2,12 +2,12 @@ import paho.mqtt.client as mqtt
 import time
 import requests
 
-broker_address = "broker_ba"
-broker_port = 1883
-client_id = "charge-point-3"
+broker_address = "broker_ma"
+broker_port = 1885
+client_id = "charge-point-1"
 
-server_address = "server_ba"
-server_port = 5000
+server_address = "server_ma"
+server_port = 5001
 server_endpoint = f"http://{server_address}:{server_port}/atualizar_status"
 
 # Usando API de callback versão 2

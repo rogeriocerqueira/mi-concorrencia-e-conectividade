@@ -1,0 +1,15 @@
+# Dockerfile para charge-point-1
+
+FROM python:3.12-slim
+
+# Define o diretório de trabalho
+WORKDIR /app
+
+# Copia o script Python
+COPY charge-point.py .
+
+# Instala as dependências
+RUN pip install flask paho-mqtt==2.1.0 requests
+
+# Comando para rodar o charge-point
+CMD ["python3", "charge-point.py"]
