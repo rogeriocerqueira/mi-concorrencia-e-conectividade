@@ -107,7 +107,7 @@ def verificar_postos_disponiveis(horario):
 
     return postos_escolhidos if len(postos_escolhidos) == 3 else None
 
-@app.route('/reservar', methods=['POST'])
+@app.route('/reserva', methods=['POST'])
 def reservar():
     dados = request.get_json()
 
@@ -138,7 +138,7 @@ def reservar():
 
     # Envia reserva para os postos encontrados
     for estado, posto in postos_escolhidos.items():
-        topico = f"reservar/{posto}"
+        topico = f"reserva/{posto}"
         payload = {
             "cliente": cliente,
             "horario": horario,
