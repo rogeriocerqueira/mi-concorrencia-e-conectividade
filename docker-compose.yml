@@ -45,7 +45,7 @@ services:
       dockerfile: Dockerfile-server
     container_name: server_ba
     ports:
-      - "5000:5000"
+      - "5001:5000"
     networks:
       - mqtt-net
     depends_on:
@@ -57,7 +57,7 @@ services:
       dockerfile: Dockerfile-server
     container_name: server_ma
     ports:
-      - "5001:5000"
+      - "5002:5000"
     networks:
       - mqtt-net
     depends_on:
@@ -69,7 +69,7 @@ services:
       dockerfile: Dockerfile-server
     container_name: server_se
     ports:
-      - "5002:5000"
+      - "5003:5000"
     networks:
       - mqtt-net
     depends_on:
